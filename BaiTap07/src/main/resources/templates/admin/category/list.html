@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<div layout:fragment="content">
+    <h2>Danh Sách Category</h2>
+    <form th:action="@{/admin/categories}" method="get">
+        <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm theo tên" />
+        <button type="submit">Tìm</button>
+    </form>
+    <a th:href="@{/admin/categories/add}">Thêm Mới</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên</th>
+                <th>Mô Tả</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="category : ${categories.content}">
+                <td th:text="${category.id}"></td>
+                <td th:text="${category.name}"></td>
+                <td th:text="${category.description}"></td>
+                <td>
+                    <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}">Sửa</a>
+                    <a th:href="@{/admin/categories/delete/{id}(id=${category.id})}" onclick="return confirm('Xác nhận xóa?')">Xóa</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- Phân trang -->
+    <div th:if="${categories.totalPages > 0}">
+        <ul class="pagination">
+            <li th:class="${categories.hasPrevious() ? '' : 'disabled'}">
+                <a th:href="@{/admin/categories(page=${categories.number - 1}, size=${categories.size}, keyword=${keyword})}">Trước</a>
+            </li>
+            <li th:each="i : ${#numbers.sequence(0, categories.totalPages - 1)}" th:class="${i == categories.number ? 'active' : ''}">
+                <a th:href="@{/admin/categories(page=${i}, size=${categories.size}, keyword=${keyword})}" th:text="${i + 1}"></a>
+            </li>
+            <li th:class="${categories.hasNext() ? '' : 'disabled'}">
+                <a th:href="@{/admin/categories(page=${categories.number + 1}, size=${categories.size}, keyword=${keyword})}">Sau</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</html>
